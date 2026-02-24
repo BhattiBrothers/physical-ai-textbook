@@ -11,6 +11,8 @@ load_dotenv()
 
 # Import services
 from services.rag_service import rag_service
+from routers import auth, translation
+from models import create_tables
 from config import settings
 
 app = FastAPI(
@@ -27,6 +29,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include routers
+app.include_router(auth.router)
+app.include_router(translation.router)
 
 # Pydantic models
 class ChatRequest(BaseModel):
@@ -166,6 +172,10 @@ async def process_selected_text(request: ChatRequest):
 async def startup_event():
     """Initialize the system on startup."""
     print("Starting up Physical AI Textbook Chatbot API...")
+
+    # Create database tables
+    create_tables()
+    print("Database tables created/verified")
 
     # Check if OpenAI API key is configured
     if not settings.openai_api_key:
