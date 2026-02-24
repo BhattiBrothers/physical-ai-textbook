@@ -1,0 +1,157 @@
+{
+  "summary": {
+    "total": 29,
+    "passed": 27,
+    "warnings": 2,
+    "failed": 0,
+    "score": 93.10344827586206
+  },
+  "results": [
+    {
+      "component": "Import config",
+      "status": "PASS",
+      "message": "Successfully imported"
+    },
+    {
+      "component": "Import models",
+      "status": "PASS",
+      "message": "Successfully imported"
+    },
+    {
+      "component": "Import services.openai_service",
+      "status": "PASS",
+      "message": "Successfully imported"
+    },
+    {
+      "component": "Import services.embedding_service",
+      "status": "PASS",
+      "message": "Successfully imported"
+    },
+    {
+      "component": "Import services.translation_service",
+      "status": "PASS",
+      "message": "Successfully imported"
+    },
+    {
+      "component": "Import core.security",
+      "status": "PASS",
+      "message": "Successfully imported"
+    },
+    {
+      "component": "Import main",
+      "status": "PASS",
+      "message": "Successfully imported"
+    },
+    {
+      "component": "Database Tables",
+      "status": "PASS",
+      "message": "Tables created/verified successfully"
+    },
+    {
+      "component": "Database Connection",
+      "status": "PASS",
+      "message": "Successfully connected to database"
+    },
+    {
+      "component": "OpenAI Service",
+      "status": "WARNING",
+      "message": "Running in mock mode (no API key)"
+    },
+    {
+      "component": "Embedding Service",
+      "status": "PASS",
+      "message": "Initialized successfully"
+    },
+    {
+      "component": "Translation Service",
+      "status": "PASS",
+      "message": "Translation working"
+    },
+    {
+      "component": "Endpoint /",
+      "status": "PASS",
+      "message": "Returns 200"
+    },
+    {
+      "component": "Endpoint /health",
+      "status": "PASS",
+      "message": "Returns 200"
+    },
+    {
+      "component": "Endpoint /system-info",
+      "status": "WARNING",
+      "message": "Returns 500"
+    },
+    {
+      "component": "Directory docs",
+      "status": "PASS",
+      "message": "Exists"
+    },
+    {
+      "component": "Directory src",
+      "status": "PASS",
+      "message": "Exists"
+    },
+    {
+      "component": "Directory static",
+      "status": "PASS",
+      "message": "Exists"
+    },
+    {
+      "component": "Module module-1-ros2",
+      "status": "PASS",
+      "message": "Has 2 markdown files"
+    },
+    {
+      "component": "Module module-2-digital-twin",
+      "status": "PASS",
+      "message": "Has 2 markdown files"
+    },
+    {
+      "component": "Module module-3-ai-robot-brain",
+      "status": "PASS",
+      "message": "Has 1 markdown files"
+    },
+    {
+      "component": "Module module-4-vla",
+      "status": "PASS",
+      "message": "Has 1 markdown files"
+    },
+    {
+      "component": "Docusaurus Config",
+      "status": "PASS",
+      "message": "Configuration file exists"
+    },
+    {
+      "component": "Chatbot index.js",
+      "status": "PASS",
+      "message": "File exists"
+    },
+    {
+      "component": "Chatbot styles.module.css",
+      "status": "PASS",
+      "message": "File exists"
+    },
+    {
+      "component": "Document PROJECT_PLAN.md",
+      "status": "PASS",
+      "message": "Exists (11554 bytes)"
+    },
+    {
+      "component": "Document PROGRESS.md",
+      "status": "PASS",
+      "message": "Exists (10441 bytes)"
+    },
+    {
+      "component": "Document README.md",
+      "status": "PASS",
+      "message": "Exists (3725 bytes)"
+    },
+    {
+      "component": "Translation Integration",
+      "status": "PASS",
+      "message": "Translation successful (Urdu text contains non-ASCII characters)"
+    }
+  ],
+  "timestamp": "2026-02-24 22:12:01"
+}
