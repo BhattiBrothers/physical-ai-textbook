@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, JSON, ForeignKey, create_engine
+from sqlalchemy import Column, Integer, String, Text, DateTime, JSON, ForeignKey, create_engine, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
@@ -23,14 +23,38 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
     username = Column(String, unique=True, index=True)
+    full_name = Column(String)
     hashed_password = Column(String)
     expertise_level = Column(String, default="beginner")  # beginner, intermediate, expert
-    background = Column(String)  # software, hardware, both
+    background = Column(String, default="both")  # software, hardware, both
+    preferred_language = Column(String, default="en")  # en, ur
+    learning_goals = Column(JSON, default=dict)  # JSON object with goals
+    subscription_status = Column(String, default="free")  # free, premium
+    is_active = Column(Boolean, default=True)
+    is_verified = Column(Boolean, default=False)
+    verification_token = Column(String, nullable=True)
+    reset_token = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
     chat_sessions = relationship("ChatSession", back_populates="user")
+    questionnaire_responses = relationship("QuestionnaireResponse", back_populates="user")
+
+    def __repr__(self):
+        return f"<User(id={self.id}, email={self.email}, expertise={self.expertise_level})>"
+
+class QuestionnaireResponse(Base):
+    __tablename__ = "questionnaire_responses"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    question_id = Column(String)  # e.g., "q1_expertise", "q2_background"
+    response = Column(JSON)  # Can be string, number, array, etc.
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # Relationships
+    user = relationship("User", back_populates="questionnaire_responses")
 
 class ChatSession(Base):
     __tablename__ = "chat_sessions"
