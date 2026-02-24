@@ -1,0 +1,18 @@
+# Minimal requirements for development without heavy dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+pydantic==2.5.0
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+tiktoken==0.5.1
+cors==1.0.1
+python-jose[cryptography]==3.3.0
+passlib==1.7.4
+bcrypt==4.0.1
+
+# Mock versions of heavy dependencies
+# openai==1.7.0  # Can be mocked
+# qdrant-client==1.17.0  # Can be mocked
+# numpy==1.24.3  # Not needed for translation service
+# sentence-transformers==2.2.2  # Not needed for mock mode

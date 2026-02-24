@@ -42,7 +42,7 @@ class EmbeddingService:
         base_metadata = {
             "document_id": document_id,
             "source": "textbook",
-            **metadata if metadata else {}
+            **(metadata if metadata else {})
         }
 
         chunks = self.chunk_text(document_text, base_metadata)

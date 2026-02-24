@@ -12,7 +12,6 @@ class OpenAIService:
         self.use_mock = not self.api_key
 
         if not self.use_mock:
-            openai.api_key = self.api_key
             self.client = openai.OpenAI(api_key=self.api_key)
             print("OpenAI service initialized with API key")
         else:

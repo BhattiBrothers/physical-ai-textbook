@@ -1,17 +1,17 @@
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
-openai==1.3.0
-qdrant-client==1.6.4
-psycopg2-binary==2.9.9
-pgvector==0.2.4
+openai==1.7.0
+qdrant-client==1.17.0
+# psycopg2-binary==2.9.9  # Commented out for development, uncomment for Neon Postgres
+# pgvector==0.2.4  # Commented out for development, uncomment for vector search in Postgres
 python-multipart==0.0.6
 pydantic==2.5.0
 pydantic-settings==2.1.0
 python-dotenv==1.0.0
 numpy==1.24.3
 tiktoken==0.5.1
-langchain==0.0.350
-langchain-openai==0.0.1
+# langchain==0.0.350  # Optional, for advanced RAG features
+# langchain-openai==0.0.1  # Optional
 sentence-transformers==2.2.2
 cors==1.0.1
 python-jose[cryptography]==3.3.0

@@ -76,7 +76,7 @@ class ChatMessage(Base):
     session_id = Column(Integer, ForeignKey("chat_sessions.id"))
     role = Column(String)  # user, assistant, system
     content = Column(Text)
-    metadata = Column(JSON)  # Additional metadata like sources, tokens, etc.
+    message_metadata = Column(JSON)  # Additional metadata like sources, tokens, etc.
     created_at = Column(DateTime, default=datetime.utcnow)
 
     # Relationships
@@ -90,7 +90,7 @@ class DocumentChunk(Base):
     chunk_text = Column(Text)
     chunk_index = Column(Integer)
     embedding = Column(JSON)  # JSON array of floats
-    metadata = Column(JSON)  # Source, module, page, etc.
+    chunk_metadata = Column(JSON)  # Source, module, page, etc.
     created_at = Column(DateTime, default=datetime.utcnow)
 
 # Create tables

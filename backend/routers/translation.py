@@ -2,9 +2,9 @@ from fastapi import APIRouter, HTTPException, Depends
 from typing import Dict, Any, List
 import logging
 
-from ..services.translation_service import translation_service
-from ..core.security import get_current_user
-from ..models import User
+from services.translation_service import translation_service
+from routers.auth import get_current_user
+from models import User
 
 router = APIRouter(prefix="/translation", tags=["translation"])
 logger = logging.getLogger(__name__)
