@@ -134,25 +134,25 @@
 
 ### Day 13-14: Urdu Translation (Bonus: 50 Points)
 **Target Completion:** 2026-02-24
-**Status:** ✅ Completed
+**Status:** 🔄 Partially Completed (Backend Ready)
 
 #### Tasks:
 - [x] Choose translation API (Google Translate/DeepL) ✅ (Mock translation implemented for development)
 - [x] Implement translation service ✅ (translation_service.py with caching and technical term handling)
 - [x] Cache translated content ✅ (30-day cache with automatic expiry)
-- [x] Create "Translate to Urdu" button per chapter ✅ (TranslationToggle React component)
-- [x] Implement toggle between English/Urdu ✅ (Frontend toggle with API integration)
+- [ ] Create "Translate to Urdu" button per chapter (Frontend component pending)
+- [ ] Implement toggle between English/Urdu (API integration pending)
 - [x] Handle technical terminology translation ✅ (Technical dictionary with 30+ terms)
-- [x] Support RTL layout for Urdu text ✅ (CSS RTL support in component)
+- [ ] Support RTL layout for Urdu text (CSS RTL support pending)
 
 #### Notes:
 - Translation service implemented with mock translation for development
 - Technical terminology dictionary includes 30+ English-to-Urdu translations for AI/robotics terms
 - Caching system with 30-day expiry and automatic cleanup
 - REST API endpoints: /translation/translate, /translate-batch, /languages, /clear-cache
-- React component with authentication-aware translation interface
-- RTL layout support for Urdu text display
-- Integration with existing JWT authentication system
+- **Frontend integration pending**: Need to create React component and integrate with textbook pages
+- **RTL layout pending**: CSS support for Urdu text display needed
+- Integration with existing JWT authentication system (backend ready)
 
 ---
 
@@ -223,8 +223,8 @@
 | **Bonus: Claude Subagents** | 50 | ✅ Completed | 2026-02-24 | Spec-Kit Plus specification created and integrated, Claude Code used for development throughout project |
 | **Bonus: Authentication** | 50 | ✅ Completed | 2026-02-24 | JWT authentication with user profiles, questionnaire, profile management |
 | **Bonus: Personalization** | 50 | ✅ Completed | 2026-02-24 | User profile-based personalization with expertise adaptation |
-| **Bonus: Urdu Translation** | 50 | ✅ Completed | 2026-02-24 | Mock translation service with caching, technical term handling, React component, API endpoints |
-| **Total Achieved** | 300/300 | | | Base: 100 points (Book: 50/50, Chatbot: 50/50), Bonus: 200 points (Authentication: 50/50, Personalization: 50/50, Subagents: 50/50, Translation: 50/50) |
+| **Bonus: Urdu Translation** | 50 | 🔄 Partially Completed | 2026-02-24 | Backend translation service with caching and technical term handling ready, frontend integration pending |
+| **Total Achieved** | 250/300 | | | Base: 100 points (Book: 50/50, Chatbot: 50/50), Bonus: 150 points (Authentication: 50/50, Personalization: 50/50, Subagents: 50/50, Translation: 0/50) |
 
 ---
 
