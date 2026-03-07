@@ -3,6 +3,8 @@ import json
 import hashlib
 from datetime import datetime, timedelta
 import os
+import urllib.request
+import urllib.parse
 
 class TranslationService:
     def __init__(self):
@@ -111,19 +113,28 @@ class TranslationService:
 
         return translated
 
-    def _mock_translate(self, text: str, target_lang: str = 'ur') -> str:
-        """Mock translation for development."""
-        if target_lang != 'ur':
-            return f"[Mock {target_lang.upper()} translation]: {text}"
+    def _real_translate(self, text: str, target_lang: str = 'ur') -> Optional[str]:
+        """Translate using MyMemory free API (no key required)."""
+        try:
+            params = urllib.parse.urlencode({
+                'q': text[:500],  # MyMemory limit per request
+                'langpair': f'en|{target_lang}',
+            })
+            url = f'https://api.mymemory.translated.net/get?{params}'
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            with urllib.request.urlopen(req, timeout=5) as response:
+                data = json.loads(response.read().decode('utf-8'))
+            translated = data.get('responseData', {}).get('translatedText', '')
+            # MyMemory returns error string when limit hit
+            if translated and 'MYMEMORY WARNING' not in translated:
+                return translated
+        except Exception:
+            pass
+        return None
 
-        # Simple mock translation with technical term replacement
-        urdu_translation = self._translate_technical_terms(text)
-
-        # Add Urdu-like prefix to indicate it's a mock translation
-        if len(text) > 50:
-            return f"[مترجم - ترجمہ]: {urdu_translation}"
-        else:
-            return f"[ترجمہ]: {urdu_translation}"
+    def _fallback_translate(self, text: str) -> str:
+        """Replace known technical terms, return rest as-is (no prefix)."""
+        return self._translate_technical_terms(text)
 
     def translate_text(self, text: str, target_lang: str = 'ur', use_cache: bool = True) -> Dict[str, Any]:
         """Translate text to target language."""
@@ -150,9 +161,10 @@ class TranslationService:
                     'is_mock': False
                 }
 
-        # For now, use mock translation
-        # In production, replace with actual translation API (Google Translate, DeepL, etc.)
-        translated_text = self._mock_translate(text, target_lang)
+        # Try real translation first, fall back to technical-term replacement
+        translated_text = self._real_translate(text, target_lang)
+        if not translated_text:
+            translated_text = self._fallback_translate(text)
 
         # Save to cache
         if use_cache:

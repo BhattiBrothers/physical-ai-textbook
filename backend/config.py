@@ -19,6 +19,10 @@ class Settings(BaseSettings):
     # Database settings (Neon Postgres)
     database_url: Optional[str] = None
 
+    # Groq settings (free OpenAI-compatible LLM)
+    groq_api_key: Optional[str] = None
+    groq_model: str = "llama-3.3-70b-versatile"
+
     # Authentication settings
     secret_key: str = "your-secret-key-change-in-production"
     algorithm: str = "HS256"

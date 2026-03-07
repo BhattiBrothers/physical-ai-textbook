@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import clsx from 'clsx';
+import ReactMarkdown from 'react-markdown';
 import styles from './styles.module.css';
 
-const Chatbot = ({ apiUrl = 'http://localhost:8000' }) => {
+const Chatbot = ({ apiUrl = '' }) => {
   const [messages, setMessages] = useState([
     { role: 'assistant', content: 'Hello! I\'m your Physical AI & Humanoid Robotics tutor. How can I help you today?', timestamp: new Date() }
   ]);
@@ -168,7 +169,9 @@ const Chatbot = ({ apiUrl = 'http://localhost:8000' }) => {
                 {formatTime(new Date(message.timestamp))}
               </span>
             </div>
-            <div className={styles.messageContent}>{message.content}</div>
+            <div className={styles.messageContent}>
+              <ReactMarkdown>{message.content}</ReactMarkdown>
+            </div>
             {message.sources && message.sources.length > 0 && (
               <div className={styles.messageSources}>
                 <span className={styles.sourcesLabel}>Sources: </span>

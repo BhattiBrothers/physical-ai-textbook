@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import styles from './styles.module.css';
 
 const TranslationToggle = ({
-  apiUrl = 'http://localhost:8000',
+  apiUrl = '',
   defaultLanguage = 'en',
   textToTranslate = '',
   onTranslationComplete = null

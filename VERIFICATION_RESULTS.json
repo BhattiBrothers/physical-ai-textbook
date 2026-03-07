@@ -1,10 +1,10 @@
 {
   "summary": {
     "total": 29,
-    "passed": 27,
-    "warnings": 2,
+    "passed": 28,
+    "warnings": 1,
     "failed": 0,
-    "score": 93.10344827586206
+    "score": 96.55172413793103
   },
   "results": [
     {
@@ -79,8 +79,8 @@
     },
     {
       "component": "Endpoint /system-info",
-      "status": "WARNING",
-      "message": "Returns 500"
+      "status": "PASS",
+      "message": "Returns 200"
     },
     {
       "component": "Directory docs",
@@ -153,5 +153,5 @@
       "message": "Translation successful (Urdu text contains non-ASCII characters)"
     }
   ],
-  "timestamp": "2026-02-24 22:12:01"
+  "timestamp": "2026-03-02 11:41:49"
 }

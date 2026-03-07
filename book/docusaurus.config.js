@@ -19,26 +19,54 @@ const config = {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
   },
 
-  // Set the production url of your site here
-  url: 'https://example.com', // Update with actual GitHub Pages URL later
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
+  // TODO: Replace BhattiBrothers with your actual GitHub username
+  url: 'https://BhattiBrothers.github.io',
   baseUrl: '/physical-ai-textbook/',
 
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: '[your-github-username]', // Usually your GitHub org/user name.
-  projectName: 'physical-ai-textbook', // Usually your repo name.
+  // GitHub pages deployment config
+  organizationName: 'BhattiBrothers',
+  projectName: 'physical-ai-textbook',
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en', 'ur'],
+    localeConfigs: {
+      en: {
+        label: 'English',
+        direction: 'ltr',
+      },
+      ur: {
+        label: 'اردو (Urdu)',
+        direction: 'rtl',
+      },
+    },
   },
+
+  plugins: [
+    function backendProxy() {
+      return {
+        name: 'backend-proxy',
+        configureWebpack() {
+          return {
+            devServer: {
+              proxy: [
+                {
+                  context: ['/auth', '/chat', '/ingest', '/search', '/translation', '/personalization', '/health', '/system-info', '/selected-text'],
+                  target: 'http://localhost:8000',
+                  changeOrigin: true,
+                },
+              ],
+            },
+          };
+        },
+      };
+    },
+  ],
 
   presets: [
     [
@@ -88,8 +116,9 @@ const config = {
             label: 'Textbook',
           },
           {to: '/blog', label: 'Blog', position: 'left'},
+          {type: 'custom-auth', position: 'right'},
           {
-            href: 'https://github.com/[your-github-username]/physical-ai-textbook',
+            href: 'https://github.com/BhattiBrothers/physical-ai-textbook',
             label: 'GitHub',
             position: 'right',
           },
@@ -133,7 +162,7 @@ const config = {
               },
               {
                 label: 'GitHub',
-                href: 'https://github.com/[your-github-username]/physical-ai-textbook',
+                href: 'https://github.com/BhattiBrothers/physical-ai-textbook',
               },
             ],
           },

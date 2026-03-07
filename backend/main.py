@@ -1,17 +1,17 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 import os
 from dotenv import load_dotenv
 import uuid
 
-# Load environment variables
 load_dotenv()
 
-# Import services
 from services.rag_service import rag_service
-from routers import auth, translation
+from services.ingest_textbook import ingest_all
+from routers import auth, translation, personalization
 from models import create_tables
 from config import settings
 
@@ -21,18 +21,32 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS middleware
+# CORS — allow_credentials MUST be False when allow_origins=["*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, restrict to your frontend domain
-    allow_credentials=True,
-    allow_methods=["*"],
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
 )
+
+# Explicit OPTIONS handler — belt-and-suspenders for preflight requests
+@app.options("/{rest_of_path:path}")
+async def preflight_handler(rest_of_path: str):
+    return Response(
+        status_code=200,
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+            "Access-Control-Allow-Headers": "Authorization, Content-Type, Accept",
+            "Access-Control-Max-Age": "3600",
+        },
+    )
 
 # Include routers
 app.include_router(auth.router)
 app.include_router(translation.router)
+app.include_router(personalization.router)
 
 # Pydantic models
 class ChatRequest(BaseModel):
@@ -71,7 +85,6 @@ class SystemInfoResponse(BaseModel):
     chunk_size: int
     chunk_overlap: int
 
-# Health check endpoint
 @app.get("/")
 async def root():
     return {"message": "Physical AI Textbook Chatbot API", "status": "healthy"}
@@ -82,24 +95,20 @@ async def health_check():
 
 @app.get("/system-info", response_model=SystemInfoResponse)
 async def get_system_info():
-    """Get system information and configuration."""
     try:
         system_info = rag_service.get_system_info()
         return SystemInfoResponse(**system_info)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error getting system info: {str(e)}")
 
-# Chat endpoint with RAG
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
-    """Process chat question with RAG."""
     try:
         result = rag_service.generate_answer(
             question=request.question,
             selected_text=request.selected_text,
-            conversation_history=None  # Could be retrieved from database
+            conversation_history=None
         )
-
         return ChatResponse(
             answer=result["answer"],
             sources=result["sources"],
@@ -109,17 +118,14 @@ async def chat(request: ChatRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing chat request: {str(e)}")
 
-# Ingest endpoint
 @app.post("/ingest", response_model=IngestResponse)
 async def ingest_document(request: IngestRequest):
-    """Ingest document text into the RAG system."""
     try:
         result = rag_service.ingest_document(
             document_text=request.document_text,
             document_id=request.document_id,
             metadata=request.metadata
         )
-
         return IngestResponse(
             success=result["success"],
             chunks_processed=result["chunks_processed"],
@@ -128,36 +134,23 @@ async def ingest_document(request: IngestRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error ingesting document: {str(e)}")
 
-# Search endpoint
 @app.post("/search", response_model=SearchResponse)
 async def search_documents(request: SearchRequest):
-    """Search documents without generating a response."""
     try:
-        results = rag_service.search_documents(
-            query=request.query,
-            limit=request.limit
-        )
-
-        return SearchResponse(
-            results=results,
-            query=request.query
-        )
+        results = rag_service.search_documents(query=request.query, limit=request.limit)
+        return SearchResponse(results=results, query=request.query)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error searching documents: {str(e)}")
 
-# Selected text endpoint
 @app.post("/selected-text")
 async def process_selected_text(request: ChatRequest):
-    """Process question with selected text as context."""
     try:
         if not request.selected_text:
             raise HTTPException(status_code=400, detail="No selected text provided")
-
         result = rag_service.generate_answer(
             question=request.question,
             selected_text=request.selected_text
         )
-
         return {
             "answer": result["answer"],
             "sources": result["sources"],
@@ -167,26 +160,15 @@ async def process_selected_text(request: ChatRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing selected text: {str(e)}")
 
-# Initialize with sample data if needed
 @app.on_event("startup")
 async def startup_event():
-    """Initialize the system on startup."""
-    print("Starting up Physical AI Textbook Chatbot API...")
-
-    # Create database tables
+    print("Starting Physical AI Textbook Chatbot API...")
     create_tables()
-    print("Database tables created/verified")
-
-    # Check if OpenAI API key is configured
-    if not settings.openai_api_key:
-        print("WARNING: OpenAI API key not configured. Set OPENAI_API_KEY environment variable.")
-
-    # Check if Qdrant is accessible
+    print("Database tables ready")
     try:
-        info = rag_service.get_system_info()
-        print(f"Qdrant collection info: {info['qdrant_collection']}")
+        ingest_all(rag_service)
     except Exception as e:
-        print(f"WARNING: Could not connect to Qdrant: {e}")
+        print(f"WARNING: Textbook ingestion failed: {e}")
 
 if __name__ == "__main__":
     import uvicorn

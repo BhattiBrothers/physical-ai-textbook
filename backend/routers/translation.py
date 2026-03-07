@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
-from typing import Dict, Any, List
+from pydantic import BaseModel
+from typing import Dict, Any, List, Optional
 import logging
 
 from services.translation_service import translation_service
@@ -9,11 +10,18 @@ from models import User
 router = APIRouter(prefix="/translation", tags=["translation"])
 logger = logging.getLogger(__name__)
 
+class TranslateRequest(BaseModel):
+    text: str
+    target_lang: str = "ur"
+    use_cache: bool = True
+
+class TranslateBatchRequest(BaseModel):
+    texts: List[str]
+    target_lang: str = "ur"
+
 @router.post("/translate")
 async def translate_text(
-    text: str,
-    target_lang: str = "ur",
-    use_cache: bool = True,
+    request: TranslateRequest,
     current_user: User = Depends(get_current_user)
 ) -> Dict[str, Any]:
     """
@@ -28,17 +36,17 @@ async def translate_text(
     - Translation result with original text, translated text, and metadata
     """
     try:
-        if not text or not text.strip():
+        if not request.text or not request.text.strip():
             raise HTTPException(status_code=400, detail="Text cannot be empty")
 
         result = translation_service.translate_text(
-            text=text,
-            target_lang=target_lang,
-            use_cache=use_cache
+            text=request.text,
+            target_lang=request.target_lang,
+            use_cache=request.use_cache
         )
 
         # Log translation request for user analytics
-        logger.info(f"Translation requested by user {current_user.id}: {target_lang}, length: {len(text)}")
+        logger.info(f"Translation requested by user {current_user.id}: {request.target_lang}, length: {len(request.text)}")
 
         return result
     except Exception as e:
@@ -47,28 +55,20 @@ async def translate_text(
 
 @router.post("/translate-batch")
 async def translate_batch(
-    texts: List[str],
-    target_lang: str = "ur",
+    request: TranslateBatchRequest,
     current_user: User = Depends(get_current_user)
 ) -> List[Dict[str, Any]]:
     """
     Translate multiple texts in batch.
-
-    Parameters:
-    - texts: List of texts to translate
-    - target_lang: Target language code (default: 'ur' for Urdu)
-
-    Returns:
-    - List of translation results
     """
     try:
-        if not texts:
+        if not request.texts:
             raise HTTPException(status_code=400, detail="Texts list cannot be empty")
 
-        results = translation_service.translate_batch(texts, target_lang)
+        results = translation_service.translate_batch(request.texts, request.target_lang)
 
         # Log batch translation for user analytics
-        logger.info(f"Batch translation requested by user {current_user.id}: {target_lang}, items: {len(texts)}")
+        logger.info(f"Batch translation requested by user {current_user.id}: {request.target_lang}, items: {len(request.texts)}")
 
         return results
     except Exception as e:

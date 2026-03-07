@@ -3,6 +3,7 @@ from services.openai_service import openai_service
 from services.qdrant_service import qdrant_service
 from services.embedding_service import embedding_service
 import uuid
+import services.ingest_textbook as textbook_store
 
 class RAGService:
     def __init__(self):
@@ -42,26 +43,32 @@ class RAGService:
 
     def generate_answer(self, question: str, selected_text: Optional[str] = None, conversation_history: List[Dict] = None) -> Dict[str, Any]:
         """Generate answer using RAG pipeline."""
-        # If selected text is provided, use it as primary context
         if selected_text:
             context = selected_text
             sources = ["selected_text"]
             search_results = []
         else:
-            # Retrieve relevant context
-            context, search_results = self.retrieve_relevant_context(question)
+            try:
+                context, search_results = self.retrieve_relevant_context(question)
+                sources = list(set([r.get("source", "unknown") for r in search_results]))
+            except Exception as e:
+                print(f"Vector retrieval failed, using keyword search: {e}")
+                context = ""
+                search_results = []
+                sources = []
 
-            # Extract sources from search results
-            sources = list(set([result.get("source", "unknown") for result in search_results]))
+            # If vector search returned nothing useful, try keyword fallback
+            if not context or not context.strip() or "mock result" in context:
+                context = textbook_store.keyword_search(question)
+                sources = ["textbook-keyword-search"] if context else []
+                print(f"Keyword fallback context length: {len(context)}")
 
-        # Generate answer using OpenAI
         answer = self.openai.generate_rag_response(
             question=question,
             context=context,
             conversation_history=conversation_history
         )
 
-        # Extract citations
         citation_info = self.openai.extract_citations(answer, sources)
 
         return {

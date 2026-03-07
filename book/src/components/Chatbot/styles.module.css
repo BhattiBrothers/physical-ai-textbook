@@ -136,8 +136,43 @@
 }
 
 .messageContent {
-  line-height: 1.5;
+  line-height: 1.7;
   font-size: 0.9375rem;
+}
+
+.messageContent p {
+  margin: 0 0 0.6rem;
+}
+.messageContent p:last-child { margin-bottom: 0; }
+
+.messageContent h1,
+.messageContent h2,
+.messageContent h3,
+.messageContent h4 {
+  margin: 0.8rem 0 0.3rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.messageContent ul,
+.messageContent ol {
+  margin: 0.3rem 0 0.6rem 1.2rem;
+  padding: 0;
+}
+
+.messageContent li {
+  margin-bottom: 0.25rem;
+}
+
+.messageContent strong {
+  font-weight: 700;
+}
+
+.messageContent code {
+  background: rgba(0,0,0,0.08);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.85rem;
 }
 
 .messageSources {
